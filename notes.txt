@@ -1,0 +1,86 @@
+
+Creating Embeddings
+
+	Input -> Encoder NN -> Vector -> Decoder NN -> Output
+
+	The input and output can be text / image or any modality. The bottomline is that by performing the above transformation several times we will be able to get Input similar to Output. When that happens, the Vector has learned an efficient compressed representation of input. We can throw away the input and encoder NN, and just retain the vectors in our database. Later, we can use decoder to generate the output.
+
+Similarity algorithms
+
+	1. KNN
+
+		O(dN) complexity - not practical - scales linearly with dataset size!
+
+	2. Approximate nearest neighbors (ANN)
+
+		Relies on the observed phenomenon in human social networks where everyone is closely connected.
+
+		6 degrees of separation: popularized concept that any 2 individuals are on average separated by 6 acquaintance links
+
+		ANN is a fantastic algorithm!
+
+	3. Hierarchical Navigable Small World (HNSW) search
+
+		Similar to how we first take a cab to airport, then the airplane takes us across countries/states. We get down and take a train or some other commute to reach our final destination.
+
+		Similar to ANN but we re-initialize the search process at every layer
+
+Vector Databases
+
+	Dense Search (Semantic Search)
+
+		Uses vector embedding representation of data to perform search
+
+		This types of search allows one to capture and return semantically similar objects
+
+		Downsides:
+
+		- Out of domain data will provide poor accuracy, i.e., our neural-network is only as good as the data it was trained on
+
+		- Searching for highly specific data, i.e., the ones which contain serial numbers and product numbers
+
+	Sparse Search
+
+		Bag of words: Easiest way to do keyword matching is using bag of words - to count how many times a word occurs in the query and the data vector and then returns objects with the highest matching word frequencies
+
+		Since the likelihood of any given sentence containing every word in your vocabulary is quite low the embeddings is mostly zeroes and thus is known as a sparse embedding.
+
+		Example algorithm: BM25
+		
+	Hybrid Search
+
+		Perform both the above searches and get respective scores. Rank all responses accordingly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
