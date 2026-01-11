@@ -19,11 +19,23 @@ Similarity algorithms
 
 		ANN is a fantastic algorithm!
 
-	3. Hierarchical Navigable Small World (HNSW) search
+	3. Hierarchical Navigable Small World (HNSW) search (specialized variant of ANN using graphs)
 
 		Similar to how we first take a cab to airport, then the airplane takes us across countries/states. We get down and take a train or some other commute to reach our final destination.
 
 		Similar to ANN but we re-initialize the search process at every layer
+
+		Understanding of HNSW:
+
+		- Builds on the idea of skip lists, where we don't need to visit each and every node to find our target. We traverse nodes at a higher level with faster speed, i.e., fewer connections, and then progressively go deeper with slower speed, i.e., more connections, until we find our target.
+
+		- HNSW, not only relies on skip lists, but also NSW (Navigable Small Worlds) which were developed prior to invention of HNSW. NSW is a concept where we a connect the nodes using friend-lists. Every node is connected to a subset of nodes of the entire graph which are considered to be friends of that node. This idea of "friend-lists" is crucial because this is what makes the nearest-neighbor search "approximate" and speeds up the process. We start with a designated node (entrypoint) in our graph, and consider all its friend's distances from the users query vector. Whichever friend-node is the closest, we set it as entrypoint and recursively repeat the process. We also halt searching if the chosen node is already closest to the query node (early stopping) compared to its neighbors (friend-list)
+
+		- HSNW = Skip lists + NSW; In NSW, you start from a random entry point and greedily hop to whichever neighbor is closest to your query. This works reasonably well, but has a fundamental issue: When your graph is large, early hops matter enormously. If you start in the "wrong neighborhood," you might need to traverse many short-range links to escape that region before you can even head toward the correct area. NSW builds a single graph where short-range and long-range connections are mixed together somewhat haphazardly (long-range links exist, but they emerge organically from insertion order, not by design). HNSW explicitly separates concerns into layers:
+
+			Top layers: Sparse, containing only a few nodes with long-range connections. These act like express highways—you can traverse large distances in the vector space with few hops.
+
+			Bottom layers: Dense, containing all nodes with short-range connections for fine-grained local search.
 
 Vector Databases
 
@@ -39,48 +51,26 @@ Vector Databases
 
 		- Searching for highly specific data, i.e., the ones which contain serial numbers and product numbers
 
-	Sparse Search
+	Sparse Search (vector of "vocabulary" size which stores frequency counts of input sentences; distinct from semantic search vectors)
 
 		Bag of words: Easiest way to do keyword matching is using bag of words - to count how many times a word occurs in the query and the data vector and then returns objects with the highest matching word frequencies
 
 		Since the likelihood of any given sentence containing every word in your vocabulary is quite low the embeddings is mostly zeroes and thus is known as a sparse embedding.
 
-		Example algorithm: BM25
+		Example algorithm: BM25 (BM25 = Best Matching 25; not a particularly significant name)
+
+		BM25:
+
+			Why BM25 improves on raw counts? Plain word frequency has problems: Common words like "the" dominate the counts.
+
+			BM25 adds two key refinements:
+
+				IDF (Inverse Document Frequency): Words appearing in fewer documents get higher weight. "Splunk" is more informative than "the."
+				Term frequency saturation: Diminishing returns — the 10th occurrence of a word adds less signal than the 2nd.
+
+			Many production systems use hybrid search — BM25 for keyword precision plus dense embeddings for semantic recall — because neither alone is perfect. If someone searches for "error code 0x8007" you want exact match, not semantic similarity to other error codes.
 		
 	Hybrid Search
 
 		Perform both the above searches and get respective scores. Rank all responses accordingly.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
