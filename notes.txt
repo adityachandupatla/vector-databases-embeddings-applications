@@ -65,8 +65,21 @@ Vector Databases
 
 			BM25 adds two key refinements:
 
+				Term frequency (TF) saturation: Diminishing returns — the 10th occurrence of a word adds less signal than the 2nd.
 				IDF (Inverse Document Frequency): Words appearing in fewer documents get higher weight. "Splunk" is more informative than "the."
-				Term frequency saturation: Diminishing returns — the 10th occurrence of a word adds less signal than the 2nd.
+
+				TF - It's a function which takes in the term and a document, and outputs the number of times that "term" has occurred in a given document.
+
+				IDF - TF(t, d) * ln(N / df(t))
+
+					Where:
+					- TF: number of occurrences in this document.
+					- N: total number of documents.
+					- df: number of documents containing the word.
+
+				Significance of "ln(N / df(t))" - the more number of documents a given term occurs in, the higher the penalty. In extreme case, if a term appears in all documents, then ln(1) is zero, thereby yielding a 0 IDF score. It means that particular term doesn't distinguish the documents.
+
+				BM25 combines both TF and IDF such that: a matching word in a short, focused document generally counts more than the same number of mentions buried in a much longer document.
 
 			Many production systems use hybrid search — BM25 for keyword precision plus dense embeddings for semantic recall — because neither alone is perfect. If someone searches for "error code 0x8007" you want exact match, not semantic similarity to other error codes.
 		
