@@ -70,7 +70,9 @@ Vector Databases
 
 				TF - It's a function which takes in the term and a document, and outputs the number of times that "term" has occurred in a given document.
 
-				IDF - TF(t, d) * ln(N / df(t))
+				IDF - ln(N / df(t))
+
+				TF-IDF weight = TF(t, d) * ln(N / df(t))
 
 					Where:
 					- TF: number of occurrences in this document.
